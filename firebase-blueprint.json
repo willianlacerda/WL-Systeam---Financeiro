@@ -1,0 +1,116 @@
+{
+  "entities": {
+    "Expense": {
+      "title": "Expense",
+      "description": "Registro financeiro de despesa",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "subCategory": { "type": "string" },
+        "amount": { "type": "number" },
+        "date": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "status": { "type": "string" },
+        "user": { "type": "string" },
+        "setor": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["description", "amount", "date", "status"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "Registro financeiro de entrada de venda e faturamento",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" },
+        "client": { "type": "string" },
+        "city": { "type": "string" },
+        "amount": { "type": "number" },
+        "date": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "status": { "type": "string" },
+        "user": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["description", "amount", "date", "status"]
+    },
+    "SubCategory": {
+      "title": "SubCategory",
+      "description": "Categoria de despesa cadastrada",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "City": {
+      "title": "City",
+      "description": "Cidade ou praça cadastrada no sistema",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "AppUser": {
+      "title": "AppUser",
+      "description": "Usuário operador ou administrador do sistema",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "username": { "type": "string" },
+        "pass": { "type": "string" },
+        "setor": { "type": "string" },
+        "role": { "type": "string" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["name", "role"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Configurações gerais do sistema",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string" },
+        "currentUser": { "type": "string" },
+        "currentSetor": { "type": "string" },
+        "currency": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/expenses/{expenseId}": {
+      "schema": "Expense",
+      "description": "Coleção de despesas operacionais"
+    },
+    "/sales/{saleId}": {
+      "schema": "Sale",
+      "description": "Coleção de vendas e receitas"
+    },
+    "/subCategories/{subCategoryId}": {
+      "schema": "SubCategory",
+      "description": "Coleção de categorias de despesas"
+    },
+    "/cities/{cityId}": {
+      "schema": "City",
+      "description": "Coleção de praças de vendas"
+    },
+    "/appUsers/{userId}": {
+      "schema": "AppUser",
+      "description": "Coleção de usuários autorizados"
+    },
+    "/settings/{settingId}": {
+      "schema": "Settings",
+      "description": "Coleção de configurações globais"
+    }
+  }
+}

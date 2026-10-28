@@ -1,0 +1,6 @@
+{
+  "summary":  "Plano de implementação detalhado para restringir o acesso à aba de relatórios, download de PDF e ocultar dados sensíveis de faturamento e saldo para operadores de lançamento.",
+  "updatedAt":  "2026-10-26T19:10:21.903387965Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

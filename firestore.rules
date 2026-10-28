@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Regra padrão de negação
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Despesas
+    match /expenses/{expenseId} {
+      allow read, write: if true;
+    }
+
+    // Vendas e Faturamento
+    match /sales/{saleId} {
+      allow read, write: if true;
+    }
+
+    // Categorias de Despesas
+    match /subCategories/{subCategoryId} {
+      allow read, write: if true;
+    }
+
+    // Praças e Cidades de Vendas
+    match /cities/{cityId} {
+      allow read, write: if true;
+    }
+
+    // Usuários e Operadores
+    match /appUsers/{userId} {
+      allow read, write: if true;
+    }
+
+    // Configurações Gerais
+    match /settings/{settingId} {
+      allow read, write: if true;
+    }
+
+    // Teste de conexão
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+  }
+}

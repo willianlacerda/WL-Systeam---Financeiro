@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=wl-system-financeiro
+Exec=wl-system-financeiro %U
+Terminal=false
+Type=Application
+Icon=${SNAP}/meta/gui/icon.png
+StartupWMClass=wl-system-financeiro
+Categories=Utility;
