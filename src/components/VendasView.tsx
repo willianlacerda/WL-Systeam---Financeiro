@@ -164,7 +164,7 @@ export const VendasView: React.FC<VendasViewProps> = ({
             Vendas do Mês & Faturamento
           </h1>
           <p className="text-xs text-zinc-400 mt-0.5">
-            Lançamento exclusivo de vendas por praça e comparativo financeiro.
+            Lançamento exclusivo de vendas por cidade e comparativo financeiro.
           </p>
         </div>
 

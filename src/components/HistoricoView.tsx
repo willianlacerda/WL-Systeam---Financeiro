@@ -178,10 +178,10 @@ export const HistoricoView: React.FC<HistoricoViewProps> = ({
         {/* Row 1: Segmented Tabs & Export */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#1f2128] pb-4">
           {/* Segmented Filter Tabs */}
-          <div className="flex items-center gap-1.5 p-1 bg-[#17181e] border border-[#23252d] rounded-xl w-full sm:w-auto">
+          <div className="flex items-center gap-1.5 p-1 bg-[#17181e] border border-[#23252d] rounded-xl w-full sm:w-auto overflow-x-auto scrollbar-none">
             <button
               onClick={() => setActiveFilterTab('todos')}
-              className={`flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 sm:flex-none px-2.5 sm:px-4 py-2 text-[11px] sm:text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 whitespace-nowrap ${
                 activeFilterTab === 'todos'
                   ? 'bg-zinc-800 text-white shadow-md'
                   : 'text-zinc-400 hover:text-white'
@@ -195,7 +195,7 @@ export const HistoricoView: React.FC<HistoricoViewProps> = ({
 
             <button
               onClick={() => setActiveFilterTab('despesas')}
-              className={`flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 sm:flex-none px-2.5 sm:px-4 py-2 text-[11px] sm:text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 whitespace-nowrap ${
                 activeFilterTab === 'despesas'
                   ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30 shadow-md'
                   : 'text-zinc-400 hover:text-rose-300'
@@ -209,7 +209,7 @@ export const HistoricoView: React.FC<HistoricoViewProps> = ({
 
             <button
               onClick={() => setActiveFilterTab('vendas')}
-              className={`flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 sm:flex-none px-2.5 sm:px-4 py-2 text-[11px] sm:text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 whitespace-nowrap ${
                 activeFilterTab === 'vendas'
                   ? 'bg-emerald-500/20 text-[#00e676] border border-emerald-500/30 shadow-md'
                   : 'text-zinc-400 hover:text-[#00e676]'

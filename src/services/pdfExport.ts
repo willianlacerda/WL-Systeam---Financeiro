@@ -685,7 +685,7 @@ export async function exportSalesEntriesPDF(
   doc.setTextColor(67, 56, 202);
   doc.setFontSize(6.5);
   doc.setFont('helvetica', 'bold');
-  doc.text('PRINCIPAL PRAÇA', c4X + 4, currentY + 6);
+  doc.text('PRINCIPAL CIDADE', c4X + 4, currentY + 6);
   doc.setTextColor(49, 46, 129);
   doc.setFontSize(8);
   doc.text(topCity ? `${topCity.city.slice(0, 16)} (${topCity.percent.toFixed(0)}%)` : '-', c4X + 4, currentY + 14);
@@ -712,7 +712,7 @@ export async function exportSalesEntriesPDF(
   autoTable(doc, {
     startY: currentY,
     margin: { left: 12, right: 12 },
-    head: [['Data', 'Descrição da Venda', 'Cidade / Praça', 'Forma Pagto', 'Status', 'Valor (R$)']],
+    head: [['Data', 'Descrição da Venda', 'Cidade', 'Forma Pagto', 'Status', 'Valor (R$)']],
     body: salesRows,
     theme: 'striped',
     headStyles: {

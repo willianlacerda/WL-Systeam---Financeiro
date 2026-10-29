@@ -541,7 +541,7 @@ export const App: React.FC = () => {
 
           {activeTab === 'relatorios' && (
             isAdmin ? (
-              <div className="p-4 sm:p-6">
+              <div className="w-full">
                 <ReportsView
                   expenses={data.expenses}
                   sales={data.sales || []}

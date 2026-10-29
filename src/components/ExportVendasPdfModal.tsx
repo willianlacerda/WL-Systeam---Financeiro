@@ -86,7 +86,7 @@ export const ExportVendasPdfModal: React.FC<ExportVendasPdfModalProps> = ({
 
     const startFormatted = startDate ? startDate.split('-').reverse().join('/') : 'Início';
     const endFormatted = endDate ? endDate.split('-').reverse().join('/') : 'Atual';
-    const cityNote = selectedCity !== 'all' ? ` • Praça: ${selectedCity}` : '';
+    const cityNote = selectedCity !== 'all' ? ` • Cidade: ${selectedCity}` : '';
     const periodLabel = `Período: ${startFormatted} até ${endFormatted}${cityNote}`;
 
     const defaultSettings: CompanySettings = settings || {

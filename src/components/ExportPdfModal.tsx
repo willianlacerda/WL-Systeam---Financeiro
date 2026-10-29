@@ -277,7 +277,7 @@ export const ExportPdfModal: React.FC<ExportPdfModalProps> = ({
                   }`}
                 >
                   <BarChart3 className="w-3.5 h-3.5" />
-                  <span>Entradas por Praça</span>
+                  <span>Venda por Cidade</span>
                 </button>
 
                 <button

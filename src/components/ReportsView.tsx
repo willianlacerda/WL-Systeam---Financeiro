@@ -39,6 +39,10 @@ interface ReportsViewProps {
 
 const DONUT_COLORS = ['#00e676', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#64748b'];
 
+const formatCurrencyDisplay = (val: number) => {
+  return Number(val || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
 export const ReportsView: React.FC<ReportsViewProps> = ({
   expenses,
   sales = [],
@@ -318,26 +322,26 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 max-w-[1400px] mx-auto overflow-hidden">
 
       {/* Primary Switcher: Relatório de Despesas vs Relatório de Vendas */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#121317] border border-[#1f2128] p-3 rounded-2xl shadow-xl">
-        <div className="flex items-center gap-2 p-1 bg-[#17181e] border border-[#23252d] rounded-xl w-full sm:w-auto">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 bg-[#121317] border border-[#1f2128] p-2 sm:p-3 rounded-2xl shadow-xl">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-1.5 sm:gap-2 p-1 bg-[#17181e] border border-[#23252d] rounded-xl w-full sm:w-auto">
           {/* Aba Relatório de Despesas */}
           <button
             onClick={() => {
               setReportCategory('despesas');
               setSearchTerm('');
             }}
-            className={`flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all ${
+            className={`px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-lg text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 sm:gap-2 transition-all min-h-[40px] text-center ${
               reportCategory === 'despesas'
                 ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 shadow-md'
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
-            <TrendingDown className="w-4 h-4 text-rose-400" />
-            <span>RELATÓRIO DE DESPESAS</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-rose-950/60 text-rose-300">
+            <TrendingDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-400 shrink-0" />
+            <span className="truncate">DESPESAS</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-rose-950/60 text-rose-300 shrink-0">
               {expenses.length}
             </span>
           </button>
@@ -348,15 +352,15 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
               setReportCategory('vendas');
               setSearchTerm('');
             }}
-            className={`flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all ${
+            className={`px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-lg text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 sm:gap-2 transition-all min-h-[40px] text-center ${
               reportCategory === 'vendas'
                 ? 'bg-emerald-500/20 text-[#00e676] border border-emerald-500/40 shadow-md'
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
-            <TrendingUp className="w-4 h-4 text-[#00e676]" />
-            <span>RELATÓRIO DE VENDAS</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-emerald-950/60 text-emerald-300">
+            <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#00e676] shrink-0" />
+            <span className="truncate">VENDAS</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-emerald-950/60 text-emerald-300 shrink-0">
               {sales.length}
             </span>
           </button>
@@ -365,21 +369,21 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
         {/* Global Export Button for the Active Category */}
         <button
           onClick={handleOpenExportModal}
-          className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white hover:bg-zinc-100 text-black text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition"
+          className="w-full sm:w-auto px-4 sm:px-5 py-2.5 rounded-xl bg-white hover:bg-zinc-100 text-black text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition min-h-[40px]"
         >
-          <FileDown className="w-4 h-4 text-black" />
+          <FileDown className="w-4 h-4 text-black shrink-0" />
           <span>EXPORTAR {reportCategory === 'despesas' ? 'DESPESAS' : 'VENDAS'} EM PDF</span>
         </button>
       </div>
 
       {/* Sub-Navigation (Ranking de Alocação | Lançamentos | Gráficos & Tendências) + Filtro de Período */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
         
         {/* Sub-views tabs */}
-        <div className="flex items-center gap-1.5 p-1 bg-[#121317] border border-[#1f2128] rounded-xl w-full sm:w-auto">
+        <div className="flex items-center gap-1.5 p-1 bg-[#121317] border border-[#1f2128] rounded-xl w-full sm:w-auto overflow-x-auto whitespace-nowrap scrollbar-none">
           <button
             onClick={() => setViewMode('ranking')}
-            className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition ${
+            className={`flex-1 sm:flex-none px-3.5 sm:px-4 py-2 rounded-lg text-[11px] sm:text-xs font-bold uppercase tracking-wider transition shrink-0 ${
               viewMode === 'ranking'
                 ? 'bg-[#181920] text-white border border-[#2c2e38] shadow-sm'
                 : 'text-zinc-400 hover:text-white'
@@ -390,7 +394,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
           
           <button
             onClick={() => setViewMode('lancamentos')}
-            className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition ${
+            className={`flex-1 sm:flex-none px-3.5 sm:px-4 py-2 rounded-lg text-[11px] sm:text-xs font-bold uppercase tracking-wider transition shrink-0 ${
               viewMode === 'lancamentos'
                 ? 'bg-[#181920] text-white border border-[#2c2e38] shadow-sm'
                 : 'text-zinc-400 hover:text-white'
@@ -401,7 +405,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
 
           <button
             onClick={() => setViewMode('charts')}
-            className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition ${
+            className={`flex-1 sm:flex-none px-3.5 sm:px-4 py-2 rounded-lg text-[11px] sm:text-xs font-bold uppercase tracking-wider transition shrink-0 ${
               viewMode === 'charts'
                 ? 'bg-[#181920] text-white border border-[#2c2e38] shadow-sm'
                 : 'text-zinc-400 hover:text-white'
@@ -412,10 +416,10 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
         </div>
 
         {/* Period selection */}
-        <div className="flex items-center gap-1 bg-[#121317] border border-[#1f2128] p-1 rounded-xl text-xs w-full sm:w-auto overflow-x-auto">
+        <div className="flex items-center gap-1 bg-[#121317] border border-[#1f2128] p-1 rounded-xl text-xs w-full sm:w-auto overflow-x-auto whitespace-nowrap scrollbar-none">
           <button
             onClick={() => setPeriodFilter('all')}
-            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg font-semibold transition ${
+            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg font-semibold transition shrink-0 text-center ${
               periodFilter === 'all' ? 'bg-[#181920] text-white' : 'text-zinc-400 hover:text-white'
             }`}
           >
@@ -423,7 +427,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
           </button>
           <button
             onClick={() => setPeriodFilter('current_month')}
-            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg font-semibold transition ${
+            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg font-semibold transition shrink-0 text-center ${
               periodFilter === 'current_month' ? 'bg-[#181920] text-emerald-400' : 'text-zinc-400 hover:text-white'
             }`}
           >
@@ -431,7 +435,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
           </button>
           <button
             onClick={() => setPeriodFilter('last_month')}
-            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg font-semibold transition ${
+            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg font-semibold transition shrink-0 text-center ${
               periodFilter === 'last_month' ? 'bg-[#181920] text-amber-400' : 'text-zinc-400 hover:text-white'
             }`}
           >
@@ -439,7 +443,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
           </button>
           <button
             onClick={() => setPeriodFilter('year')}
-            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg font-semibold transition ${
+            className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg font-semibold transition shrink-0 text-center ${
               periodFilter === 'year' ? 'bg-[#181920] text-blue-400' : 'text-zinc-400 hover:text-white'
             }`}
           >
@@ -461,8 +465,8 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
               <span className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
                 Total Despesas no Filtro
               </span>
-              <div className="text-xl font-extrabold text-rose-400 font-mono">
-                R$ {totalExpenseAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              <div className="text-xl font-extrabold text-rose-400 font-mono tracking-tight">
+                R$ {formatCurrencyDisplay(totalExpenseAmount)}
               </div>
               <div className="text-[11px] text-zinc-500">
                 {filteredExpenses.length} desembolsos contabilizados
@@ -478,7 +482,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
                 {expenseAllocationRanking[0]?.item || '-'}
               </div>
               <div className="text-[11px] text-rose-400 font-mono font-bold">
-                {expenseAllocationRanking[0] ? `R$ ${expenseAllocationRanking[0].volume.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${expenseAllocationRanking[0].percent.toFixed(1)}%)` : '-'}
+                {expenseAllocationRanking[0] ? `R$ ${formatCurrencyDisplay(expenseAllocationRanking[0].volume)} (${expenseAllocationRanking[0].percent.toFixed(1)}%)` : '-'}
               </div>
             </div>
 
@@ -548,7 +552,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
                           {row.item}
                         </td>
                         <td className="py-4 px-6 text-right whitespace-nowrap font-mono font-bold text-xs text-rose-400">
-                          R$ {row.volume.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          R$ {formatCurrencyDisplay(row.volume)}
                         </td>
                         <td className="py-4 px-6 text-right whitespace-nowrap">
                           <div className="flex flex-col items-end gap-1.5">
@@ -735,24 +739,24 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
               <span className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
                 Total Faturado no Filtro
               </span>
-              <div className="text-xl font-extrabold text-[#00e676] font-mono">
-                R$ {totalSalesAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              <div className="text-xl font-extrabold text-[#00e676] font-mono tracking-tight">
+                R$ {formatCurrencyDisplay(totalSalesAmount)}
               </div>
               <div className="text-[11px] text-zinc-500">
                 {filteredSales.length} vendas registradas
               </div>
             </div>
 
-            {/* Praça Líder em Vendas */}
+            {/* Cidade Líder em Vendas */}
             <div className="p-4 rounded-2xl bg-[#121317] border border-[#1f2128] space-y-1">
               <span className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
-                Praça Líder em Vendas
+                Cidade Líder em Vendas
               </span>
               <div className="text-lg font-extrabold text-white truncate uppercase">
                 {salesCityRanking[0]?.city || '-'}
               </div>
               <div className="text-[11px] text-[#00e676] font-mono font-bold">
-                {salesCityRanking[0] ? `R$ ${salesCityRanking[0].volume.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${salesCityRanking[0].percent.toFixed(1)}%)` : '-'}
+                {salesCityRanking[0] ? `R$ ${formatCurrencyDisplay(salesCityRanking[0].volume)} (${salesCityRanking[0].percent.toFixed(1)}%)` : '-'}
               </div>
             </div>
 
@@ -762,18 +766,18 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
                 Status de Recebimento
               </span>
               <div className="text-sm font-bold text-zinc-200">
-                <span className="text-[#00e676] font-mono">R$ {salesStatusSummary.recebido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                <span className="text-[#00e676] font-mono">R$ {formatCurrencyDisplay(salesStatusSummary.recebido)}</span>
                 <span className="text-zinc-500 text-[10px] ml-1">rec.</span>
               </div>
               <div className="text-[11px] text-amber-400 font-mono">
-                R$ {salesStatusSummary.pendente.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} a receber
+                R$ {formatCurrencyDisplay(salesStatusSummary.pendente)} a receber
               </div>
             </div>
 
             {/* Cidades com Movimentação */}
             <div className="p-4 rounded-2xl bg-[#121317] border border-[#1f2128] space-y-1">
               <span className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
-                Praças Atendidas
+                Cidades Atendidas
               </span>
               <div className="text-xl font-extrabold text-emerald-400 font-mono">
                 {salesCityRanking.length}
@@ -790,7 +794,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
             <div className="rounded-2xl bg-[#121317] border border-[#1f2128] overflow-hidden shadow-2xl">
               <div className="px-6 py-4 border-b border-[#1f2128] flex items-center justify-between">
                 <h3 className="text-xs font-bold tracking-widest text-zinc-300 uppercase">
-                  RANKING DE ALOCAÇÃO POR PRAÇA / CIDADE
+                  RANKING DE VENDAS POR CIDADE
                 </h3>
                 <button
                   onClick={handleOpenExportModal}
@@ -830,7 +834,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
                           {row.count}
                         </td>
                         <td className="py-4 px-6 text-right whitespace-nowrap font-mono font-bold text-xs text-[#00e676]">
-                          R$ {row.volume.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          R$ {formatCurrencyDisplay(row.volume)}
                         </td>
                         <td className="py-4 px-6 text-right whitespace-nowrap">
                           <div className="flex flex-col items-end gap-1.5">
@@ -886,7 +890,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
                     <tr>
                       <th className="py-3 px-6 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">DATA</th>
                       <th className="py-3 px-6 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">MERCADORIA / VENDA</th>
-                      <th className="py-3 px-6 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">CIDADE / PRAÇA</th>
+                      <th className="py-3 px-6 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">CIDADE</th>
                       <th className="py-3 px-6 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">USUÁRIO</th>
                       <th className="py-3 px-6 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">PAGAMENTO</th>
                       <th className="py-3 px-6 text-[10px] font-bold text-zinc-500 uppercase tracking-wider text-center">STATUS</th>
@@ -974,7 +978,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
               <div className="p-5 rounded-2xl bg-[#121317] border border-[#1f2128] space-y-4">
                 <div>
                   <h4 className="text-xs font-bold text-white uppercase tracking-wider">
-                    Faturamento por Praça / Cidade
+                    Faturamento por Cidade
                   </h4>
                   <p className="text-[11px] text-zinc-500">Participação de mercado por localidade</p>
                 </div>
