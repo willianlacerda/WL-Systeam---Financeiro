@@ -147,7 +147,7 @@ export const GerenciarCategoriasView: React.FC<GerenciarCategoriasViewProps> = (
     name: string;
   } | null>(null);
 
-  // Solicitar exclusão de Categoria (Apenas Administrador Geral)
+  // Solicitar exclusão de Categoria (Apenas Administrador)
   const handleRequestDeleteCat = (cat: SubCategory) => {
     if (!isAdmin) return;
     setDeleteConfirmTarget({
@@ -157,7 +157,7 @@ export const GerenciarCategoriasView: React.FC<GerenciarCategoriasViewProps> = (
     });
   };
 
-  // Solicitar exclusão de Cidade (Apenas Administrador Geral)
+  // Solicitar exclusão de Cidade (Apenas Administrador)
   const handleRequestDeleteCity = (city: string) => {
     if (!isAdmin) return;
     setDeleteConfirmTarget({
@@ -168,7 +168,7 @@ export const GerenciarCategoriasView: React.FC<GerenciarCategoriasViewProps> = (
 
   // Executar exclusão definitiva após confirmação explícita do usuário
   const handleConfirmDelete = () => {
-    if (!deleteConfirmTarget || !isAdmin) {
+    if (!isAdmin || !deleteConfirmTarget) {
       setDeleteConfirmTarget(null);
       return;
     }
@@ -299,15 +299,7 @@ export const GerenciarCategoriasView: React.FC<GerenciarCategoriasViewProps> = (
       {activeSubTab === 'despesas' && (
         <div className="space-y-5 animate-fade-in">
           
-          {/* Security notice for operator */}
-          {!isAdmin && (
-            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-2.5 text-xs text-amber-300">
-              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>
-                <strong>Acesso de Operador:</strong> Você pode cadastrar novas despesas. A exclusão de categorias existentes é restrita ao <strong>Administrador Geral</strong>.
-              </span>
-            </div>
-          )}
+
 
           {/* Add Category Form */}
           <div className="p-5 rounded-2xl bg-[#121317] border border-[#1f2128] space-y-4 shadow-sm">
@@ -441,15 +433,7 @@ export const GerenciarCategoriasView: React.FC<GerenciarCategoriasViewProps> = (
       {activeSubTab === 'vendas' && (
         <div className="space-y-5 animate-fade-in">
           
-          {/* Security notice for operator */}
-          {!isAdmin && (
-            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-2.5 text-xs text-amber-300">
-              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>
-                <strong>Acesso de Operador:</strong> Você pode cadastrar novas praças de venda. A exclusão de cidades existentes é restrita ao <strong>Administrador Geral</strong>.
-              </span>
-            </div>
-          )}
+
 
           {/* Add City Form */}
           <div className="p-5 rounded-2xl bg-[#121317] border border-[#1f2128] space-y-4 shadow-sm">
@@ -580,8 +564,8 @@ export const GerenciarCategoriasView: React.FC<GerenciarCategoriasViewProps> = (
         </div>
       )}
 
-      {/* Confirmation Modal: "Realmente deseja apagar?" */}
-      {deleteConfirmTarget && (
+      {/* Confirmation Modal: "Realmente deseja apagar?" (Apenas Administrador) */}
+      {deleteConfirmTarget && isAdmin && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
           <div className="w-full max-w-md bg-[#131418] border-t sm:border border-rose-500/40 rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden p-5 sm:p-6 space-y-4 sm:space-y-5 animate-scale-in">
             {/* Mobile Drag Handle */}

@@ -149,18 +149,18 @@ export const NovoLancamentoView: React.FC<NovoLancamentoViewProps> = ({
           </div>
         </div>
 
-        {/* RESUMO OPERACIONAL Card */}
-        <div className="p-5 rounded-2xl bg-[#121317] border border-[#1f2128] space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold tracking-wider text-emerald-400 uppercase">
-              {isAdmin ? 'RESUMO OPERACIONAL' : 'TERMINAL DE LANÇAMENTOS'}
-            </span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 uppercase">
-              ATIVO
-            </span>
-          </div>
+        {/* RESUMO OPERACIONAL Card (Apenas Administrador) */}
+        {isAdmin && (
+          <div className="p-5 rounded-2xl bg-[#121317] border border-[#1f2128] space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold tracking-wider text-emerald-400 uppercase">
+                RESUMO OPERACIONAL
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 uppercase">
+                ATIVO
+              </span>
+            </div>
 
-          {isAdmin ? (
             <div>
               <div className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
                 MÊS ATUAL
@@ -174,17 +174,8 @@ export const NovoLancamentoView: React.FC<NovoLancamentoViewProps> = ({
                 <div className="bg-[#00e676] h-full rounded-full w-2/5 shadow-sm shadow-emerald-500/50" />
               </div>
             </div>
-          ) : (
-            <div className="space-y-1.5">
-              <div className="text-xs font-bold text-white">
-                Operador Autorizado
-              </div>
-              <p className="text-[11px] text-zinc-400 leading-relaxed">
-                Clique em qualquer categoria na grade ao lado para abrir a tela de lançamento e registrar a despesa.
-              </p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
       </div>
 

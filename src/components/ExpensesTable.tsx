@@ -24,6 +24,7 @@ interface ExpensesTableProps {
   onDeleteExpense: (id: string) => void;
   onToggleStatus: (id: string) => void;
   onExportPDF: (filtered: Expense[], filterDesc: string) => void;
+  isAdmin?: boolean;
 }
 
 export const ExpensesTable: React.FC<ExpensesTableProps> = ({
@@ -35,6 +36,7 @@ export const ExpensesTable: React.FC<ExpensesTableProps> = ({
   onDeleteExpense,
   onToggleStatus,
   onExportPDF,
+  isAdmin = true,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -379,17 +381,19 @@ export const ExpensesTable: React.FC<ExpensesTableProps> = ({
                           >
                             <Edit3 className="w-4 h-4" />
                           </button>
-                          <button
-                            onClick={() => {
-                              if (confirm(`Deseja realmente excluir a despesa "${expense.description}"?`)) {
-                                onDeleteExpense(expense.id);
-                              }
-                            }}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition"
-                            title="Excluir lançamento"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          {isAdmin && (
+                            <button
+                              onClick={() => {
+                                if (confirm(`Deseja realmente excluir a despesa "${expense.description}"?`)) {
+                                  onDeleteExpense(expense.id);
+                                }
+                              }}
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition"
+                              title="Excluir lançamento"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

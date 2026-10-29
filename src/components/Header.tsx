@@ -1,11 +1,13 @@
 import React from 'react';
-import { LogOut, Shield, UserCheck, User } from 'lucide-react';
+import { LogOut, Shield, UserCheck, RefreshCw, Cloud } from 'lucide-react';
 
 interface HeaderProps {
   title: string;
   setor?: string;
   usuario?: string;
   isAdmin?: boolean;
+  syncStatus?: 'synced' | 'syncing' | 'error';
+  onManualSync?: () => void;
   onLogout?: () => void;
 }
 
@@ -13,6 +15,8 @@ export const Header: React.FC<HeaderProps> = ({
   title,
   usuario = 'Willian',
   isAdmin = true,
+  syncStatus = 'synced',
+  onManualSync,
   onLogout,
 }) => {
   return (
@@ -57,6 +61,27 @@ export const Header: React.FC<HeaderProps> = ({
             </>
           )}
         </div>
+
+        {/* Cloud Sync Status / Button */}
+        <button
+          onClick={onManualSync}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-[11px] font-semibold transition active:scale-95 cursor-pointer ${
+            syncStatus === 'syncing'
+              ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+              : syncStatus === 'error'
+              ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+              : 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/20'
+          }`}
+          title="Clique para sincronizar com a nuvem (celular e PC)"
+        >
+          <RefreshCw className={`w-3.5 h-3.5 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
+          <span className="hidden md:inline">
+            {syncStatus === 'syncing' ? 'Sincronizando...' : syncStatus === 'error' ? 'Erro na Nuvem' : 'Nuvem Conectada'}
+          </span>
+          <span className="md:hidden">
+            {syncStatus === 'syncing' ? '...' : 'Nuvem'}
+          </span>
+        </button>
 
         <span className="hidden sm:inline text-zinc-700">|</span>
 

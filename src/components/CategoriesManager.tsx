@@ -8,6 +8,7 @@ interface CategoriesManagerProps {
   onAddSubCategory: (cat: Omit<SubCategory, 'id'>) => void;
   onUpdateSubCategory: (cat: SubCategory) => void;
   onDeleteSubCategory: (id: string) => void;
+  isAdmin?: boolean;
 }
 
 const PRESET_COLORS = [
@@ -21,6 +22,7 @@ export const CategoriesManager: React.FC<CategoriesManagerProps> = ({
   onAddSubCategory,
   onUpdateSubCategory,
   onDeleteSubCategory,
+  isAdmin = true,
 }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -246,17 +248,19 @@ export const CategoriesManager: React.FC<CategoriesManagerProps> = ({
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                   </button>
-                  <button
-                    onClick={() => {
-                      if (confirm(`Deseja excluir a categoria "${cat.name}"?`)) {
-                        onDeleteSubCategory(cat.id);
-                      }
-                    }}
-                    className="p-1 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition"
-                    title="Excluir"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  {isAdmin && (
+                    <button
+                      onClick={() => {
+                        if (confirm(`Deseja excluir a categoria "${cat.name}"?`)) {
+                          onDeleteSubCategory(cat.id);
+                        }
+                      }}
+                      className="p-1 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition"
+                      title="Excluir"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
               </div>
 

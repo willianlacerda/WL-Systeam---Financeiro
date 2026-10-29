@@ -88,6 +88,10 @@
     }
   },
   "firestore": {
+    "/system_data/{docId}": {
+      "schema": "Settings",
+      "description": "Dados consolidados do sistema financeiro para sincronização multi-dispositivo"
+    },
     "/expenses/{expenseId}": {
       "schema": "Expense",
       "description": "Coleção de despesas operacionais"

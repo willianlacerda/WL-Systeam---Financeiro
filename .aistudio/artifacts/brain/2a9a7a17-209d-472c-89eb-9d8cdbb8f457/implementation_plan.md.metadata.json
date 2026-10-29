@@ -1,6 +1,6 @@
 {
-  "summary":  "Plano de implementação para responsividade completa em smartphones e dispositivos móveis do WL System, com barra de navegação inferior estilo aplicativo nativo, cartões compactos de dados para despesas e vendas, gavetas inferiores (bottom sheets) para modais e suporte ergonômico ao toque.",
-  "updatedAt":  "2026-10-27T18:28:55.920974070Z",
+  "summary":  "Plano de implementação para ocultar dados de valores sensíveis (Total Mensal, Total Acumulado, Resumo Operacional e Balanço DRE) para usuários com perfil Operador de Lançamento, mantendo o acesso exclusivo a administradores.",
+  "updatedAt":  "2026-10-29T11:27:36.557183498Z",
   "requestFeedback":  true,
   "userFacing":  true
 }

@@ -6,6 +6,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Dados consolidados do sistema financeiro (sincronização multi-dispositivo)
+    match /system_data/{docId} {
+      allow read, write: if true;
+    }
+
     // Despesas
     match /expenses/{expenseId} {
       allow read, write: if true;

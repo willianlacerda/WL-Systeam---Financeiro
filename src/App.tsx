@@ -20,11 +20,12 @@ import {
   normalizeAppUser,
   normalizeSale
 } from './services/api';
-import { subscribeToFirebaseFinancialData } from './services/firebase';
+import { subscribeToFirebaseFinancialData, getFirebaseFinancialData } from './services/firebase';
 
 export const App: React.FC = () => {
   const [data, setData] = useState<FinancialData>(INITIAL_DATA);
   const [loading, setLoading] = useState(true);
+  const [syncStatus, setSyncStatus] = useState<'synced' | 'syncing' | 'error'>('synced');
   const [activeTab, setActiveTab] = useState<ActiveTab>('lancar');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return !!sessionStorage.getItem('wl_session_active');
@@ -72,19 +73,26 @@ export const App: React.FC = () => {
     load();
 
     // Sincronização em tempo real na nuvem entre celular e computador (.exe)
-    const unsubscribe = subscribeToFirebaseFinancialData((cloudData) => {
-      if (!isMounted) return;
-      if (cloudData && (cloudData.expenses?.length || cloudData.sales?.length || cloudData.subCategories?.length)) {
-        setData((prev) => ({
-          ...cloudData,
-          settings: {
-            ...cloudData.settings,
-            currentUser: prev.settings?.currentUser || cloudData.settings?.currentUser || 'Willian',
-            currentSetor: prev.settings?.currentSetor || cloudData.settings?.currentSetor || 'Administrativo',
-          }
-        }));
+    const unsubscribe = subscribeToFirebaseFinancialData(
+      (cloudData) => {
+        if (!isMounted) return;
+        setSyncStatus('synced');
+        if (cloudData && (cloudData.expenses?.length || cloudData.sales?.length || cloudData.subCategories?.length)) {
+          setData((prev) => ({
+            ...cloudData,
+            settings: {
+              ...cloudData.settings,
+              currentUser: prev.settings?.currentUser || cloudData.settings?.currentUser || 'Willian',
+              currentSetor: prev.settings?.currentSetor || cloudData.settings?.currentSetor || 'Administrativo',
+            }
+          }));
+        }
+      },
+      (err) => {
+        console.warn('Erro na sincronização em tempo real:', err);
+        if (isMounted) setSyncStatus('error');
       }
-    });
+    );
 
     return () => {
       isMounted = false;
@@ -92,11 +100,41 @@ export const App: React.FC = () => {
     };
   }, []);
 
+  const handleManualSync = useCallback(async () => {
+    setSyncStatus('syncing');
+    try {
+      const cloud = await getFirebaseFinancialData();
+      if (cloud) {
+        setData((prev) => ({
+          ...cloud,
+          settings: {
+            ...cloud.settings,
+            currentUser: prev.settings?.currentUser || cloud.settings?.currentUser || 'Willian',
+            currentSetor: prev.settings?.currentSetor || cloud.settings?.currentSetor || 'Administrativo',
+          }
+        }));
+        setSyncStatus('synced');
+      } else {
+        await saveFinancialData(data);
+        setSyncStatus('synced');
+      }
+    } catch (err) {
+      console.error('Manual sync error:', err);
+      setSyncStatus('error');
+    }
+  }, [data]);
+
   const persist = useCallback((newData: FinancialData) => {
     setData(newData);
-    saveFinancialData(newData).catch(err => {
-      console.error('Failed to persist financial data:', err);
-    });
+    setSyncStatus('syncing');
+    saveFinancialData(newData)
+      .then(() => {
+        setSyncStatus('synced');
+      })
+      .catch(err => {
+        console.error('Failed to persist financial data:', err);
+        setSyncStatus('error');
+      });
   }, []);
 
   // Total Acumulado (all time)
@@ -113,7 +151,8 @@ export const App: React.FC = () => {
   }, [data.expenses]);
 
   // Current user & admin check
-  const currentUser = data.settings?.currentUser || 'Willian';
+  const sessionUser = typeof window !== 'undefined' ? sessionStorage.getItem('wl_session_user') : null;
+  const currentUser = sessionUser || data.settings?.currentUser || 'Willian';
   const isAdmin = useMemo(() => {
     const userObj = data.appUsers.find(
       u => u.name.toLowerCase() === currentUser.toLowerCase() || 
@@ -125,12 +164,14 @@ export const App: React.FC = () => {
     return currentUser.toLowerCase().includes('willian') || currentUser.toLowerCase().includes('admin');
   }, [data.appUsers, currentUser]);
 
-  // Restrição de Acesso: Operador não acessa aba de relatórios
+  // Se o usuário for operador de lançamento, não permitir acesso à aba de relatórios
   useEffect(() => {
     if (!isAdmin && activeTab === 'relatorios') {
       setActiveTab('lancar');
     }
   }, [isAdmin, activeTab]);
+
+
 
   const handleSelectUser = (user: AppUser) => {
     persist({
@@ -176,6 +217,10 @@ export const App: React.FC = () => {
 
   // Delete expense
   const handleDeleteExpense = (id: string) => {
+    if (!isAdmin) {
+      alert('Acesso restrito: Usuários operadores não têm permissão para excluir lançamentos.');
+      return;
+    }
     const updated = data.expenses.filter(e => e.id !== id);
     persist({ ...data, expenses: updated });
   };
@@ -197,6 +242,10 @@ export const App: React.FC = () => {
   };
 
   const handleDeleteSale = (id: string) => {
+    if (!isAdmin) {
+      alert('Acesso restrito: Usuários operadores não têm permissão para excluir lançamentos.');
+      return;
+    }
     const currentSales = data.sales || [];
     const updated = currentSales.filter(s => s.id !== id);
     persist({ ...data, sales: updated });
@@ -232,6 +281,10 @@ export const App: React.FC = () => {
   };
 
   const handleDeleteCategory = (idOrName: string) => {
+    if (!isAdmin) {
+      alert('Acesso restrito: Usuários operadores não têm permissão para excluir categorias.');
+      return;
+    }
     const target = (idOrName || '').trim().toUpperCase();
     const updated = data.subCategories.filter(
       c => c.id !== idOrName && c.name.trim().toUpperCase() !== target
@@ -273,6 +326,10 @@ export const App: React.FC = () => {
   };
 
   const handleDeleteCity = (cityName: string) => {
+    if (!isAdmin) {
+      alert('Acesso restrito: Usuários operadores não têm permissão para excluir cidades.');
+      return;
+    }
     const currentCities = data.cities && data.cities.length > 0 ? data.cities : INITIAL_CITIES;
     const targetUpper = cityName.trim().toUpperCase();
     const updated = currentCities.filter(c => c.toUpperCase() !== targetUpper);
@@ -284,6 +341,10 @@ export const App: React.FC = () => {
 
   // Users management
   const handleAddUser = (user: Omit<AppUser, 'id'>) => {
+    if (!isAdmin) {
+      alert('Acesso restrito: Somente usuários administradores podem criar novos usuários.');
+      return;
+    }
     const newUser: AppUser = {
       ...user,
       id: `usr-${Date.now()}`,
@@ -295,11 +356,19 @@ export const App: React.FC = () => {
   };
 
   const handleUpdateUser = (user: AppUser) => {
+    if (!isAdmin) {
+      alert('Acesso restrito: Somente usuários administradores podem alterar usuários.');
+      return;
+    }
     const updated = data.appUsers.map(u => u.id === user.id ? user : u);
     persist({ ...data, appUsers: updated });
   };
 
   const handleDeleteUser = (id: string) => {
+    if (!isAdmin) {
+      alert('Acesso restrito: Somente usuários administradores podem excluir usuários.');
+      return;
+    }
     const updated = data.appUsers.filter(u => u.id !== id);
     persist({ ...data, appUsers: updated });
   };
@@ -426,6 +495,8 @@ export const App: React.FC = () => {
           setor={data.settings?.currentSetor || (isAdmin ? 'Administrativo' : 'Operacional')}
           usuario={currentUser}
           isAdmin={isAdmin}
+          syncStatus={syncStatus}
+          onManualSync={handleManualSync}
           onLogout={handleLogout}
         />
 
@@ -468,20 +539,28 @@ export const App: React.FC = () => {
             />
           )}
 
-          {activeTab === 'relatorios' && isAdmin && (
-            <div className="p-4 sm:p-6">
-              <ReportsView
-                expenses={data.expenses}
-                sales={data.sales || []}
-                cities={data.cities || INITIAL_CITIES}
-                subCategories={data.subCategories}
-                appUsers={data.appUsers}
-                settings={{
-                  companyName: data.settings?.companyName || 'WL SYSTEM',
-                  currency: 'BRL',
-                }}
-              />
-            </div>
+          {activeTab === 'relatorios' && (
+            isAdmin ? (
+              <div className="p-4 sm:p-6">
+                <ReportsView
+                  expenses={data.expenses}
+                  sales={data.sales || []}
+                  cities={data.cities || INITIAL_CITIES}
+                  subCategories={data.subCategories}
+                  appUsers={data.appUsers}
+                  settings={{
+                    companyName: data.settings?.companyName || 'WL SYSTEM',
+                    currency: 'BRL',
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="p-8 max-w-md mx-auto text-center space-y-3">
+                <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-amber-300 font-semibold text-xs">
+                  Acesso Restrito: Usuários operadores não têm permissão para visualizar relatórios.
+                </div>
+              </div>
+            )
           )}
 
           {activeTab === 'configuracoes' && (

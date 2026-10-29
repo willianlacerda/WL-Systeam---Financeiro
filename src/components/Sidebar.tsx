@@ -101,7 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span>Histórico</span>
           </button>
 
-          {/* 4. Relatórios (Apenas Administrador Geral) */}
+          {/* 4. Relatórios (Visível apenas para Administrador Geral) */}
           {isAdmin && (
             <button
               onClick={() => onTabChange('relatorios')}
@@ -138,8 +138,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <span>DADOS SINCRONIZADOS</span>
         </div>
 
-        {/* Totais Sensíveis (Visíveis apenas para Administrador Geral) */}
-        {isAdmin ? (
+        {/* TOTAL MENSAL E TOTAL ACUMULADO (Apenas Administrador) */}
+        {isAdmin && (
           <>
             {/* TOTAL MENSAL */}
             <div className="p-3 rounded-xl bg-[#141519] border border-[#20222a] space-y-1">
@@ -161,19 +161,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </div>
           </>
-        ) : (
-          /* Modo Operador de Lançamento */
-          <div className="p-3 rounded-xl bg-[#141519] border border-[#20222a] space-y-1">
-            <div className="text-[10px] font-semibold tracking-wider text-indigo-400 uppercase">
-              MODO OPERACIONAL
-            </div>
-            <div className="text-xs font-bold text-zinc-200">
-              Operador de Lançamento
-            </div>
-            <div className="text-[10px] text-zinc-500 leading-snug">
-              Terminal autorizado para novos registros e consultas
-            </div>
-          </div>
         )}
       </div>
     </aside>

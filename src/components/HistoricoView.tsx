@@ -149,10 +149,15 @@ export const HistoricoView: React.FC<HistoricoViewProps> = ({
   const [itemToDelete, setItemToDelete] = useState<UnifiedHistoryItem | null>(null);
 
   const handleDelete = (item: UnifiedHistoryItem) => {
+    if (!isAdmin) return;
     setItemToDelete(item);
   };
 
   const handleConfirmDeleteItem = () => {
+    if (!isAdmin) {
+      setItemToDelete(null);
+      return;
+    }
     if (!itemToDelete) return;
     if (itemToDelete.type === 'despesa') {
       onDeleteExpense(itemToDelete.rawId);
@@ -217,7 +222,7 @@ export const HistoricoView: React.FC<HistoricoViewProps> = ({
             </button>
           </div>
 
-          {/* Export Report Button (Apenas Administrador Geral) */}
+          {/* Export Report Button (Apenas Administrador) */}
           {isAdmin && (
             <div className="shrink-0 w-full sm:w-auto">
               <button
@@ -302,9 +307,11 @@ export const HistoricoView: React.FC<HistoricoViewProps> = ({
                 <th className="py-4 px-6 text-[11px] font-bold text-zinc-500 uppercase tracking-wider text-right">
                   VALOR
                 </th>
-                <th className="py-4 px-6 text-[11px] font-bold text-zinc-500 uppercase tracking-wider text-center">
-                  AÇÕES
-                </th>
+                {isAdmin && (
+                  <th className="py-4 px-6 text-[11px] font-bold text-zinc-500 uppercase tracking-wider text-center">
+                    AÇÕES
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-[#181920]">
@@ -380,23 +387,25 @@ export const HistoricoView: React.FC<HistoricoViewProps> = ({
                       </span>
                     </td>
 
-                    {/* AÇÕES */}
-                    <td className="py-4 px-6 text-center whitespace-nowrap">
-                      <button
-                        onClick={() => handleDelete(item)}
-                        className="p-1.5 rounded-lg text-zinc-600 group-hover:text-zinc-400 hover:text-rose-400 transition"
-                        title={isDespesa ? 'Excluir despesa' : 'Excluir venda'}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </td>
+                    {/* AÇÕES (Apenas Administrador) */}
+                    {isAdmin && (
+                      <td className="py-4 px-6 text-center whitespace-nowrap">
+                        <button
+                          onClick={() => handleDelete(item)}
+                          className="p-1.5 rounded-lg text-zinc-600 group-hover:text-zinc-400 hover:text-rose-400 transition"
+                          title={isDespesa ? 'Excluir despesa' : 'Excluir venda'}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 );
               })}
 
               {filteredItems.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-zinc-500 text-xs">
+                  <td colSpan={isAdmin ? 6 : 5} className="py-12 text-center text-zinc-500 text-xs">
                     Nenhum lançamento localizado para os filtros informados.
                   </td>
                 </tr>
@@ -451,14 +460,16 @@ export const HistoricoView: React.FC<HistoricoViewProps> = ({
                     </div>
                   </div>
                   
-                  {/* Delete action button (large touch hitbox) */}
-                  <button
-                    onClick={() => handleDelete(item)}
-                    className="p-2 rounded-lg text-zinc-500 hover:text-rose-400 active:scale-95 transition min-h-[40px] min-w-[40px] flex items-center justify-center shrink-0"
-                    title="Excluir lançamento"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {/* Delete action button (large touch hitbox) - apenas para administradores */}
+                  {isAdmin && (
+                    <button
+                      onClick={() => handleDelete(item)}
+                      className="p-2 rounded-lg text-zinc-500 hover:text-rose-400 active:scale-95 transition min-h-[40px] min-w-[40px] flex items-center justify-center shrink-0"
+                      title="Excluir lançamento"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
 
                 {/* Bottom: Payment Method and Amount */}
@@ -497,9 +508,7 @@ export const HistoricoView: React.FC<HistoricoViewProps> = ({
                   <span className="text-zinc-400 font-normal ml-1">(Modo de Alta Performance)</span>
                 </p>
                 <p className="text-[11px] text-zinc-400 mt-0.5">
-                  {isAdmin 
-                    ? 'Para auditar o histórico completo sem sobrecarregar o navegador, emita o relatório oficial em PDF.'
-                    : 'Listagem otimizada de lançamentos para consulta operacional.'}
+                  Para auditar o histórico completo sem sobrecarregar o navegador, emita o relatório oficial em PDF.
                 </p>
               </div>
             </div>

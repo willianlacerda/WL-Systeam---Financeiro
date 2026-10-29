@@ -7,6 +7,7 @@ interface GerenciarDespesasViewProps {
   onAddCategory: (name: string) => void;
   onDeleteCategory: (id: string) => void;
   onRenameCategory: (id: string, newName: string) => void;
+  isAdmin?: boolean;
 }
 
 export const GerenciarDespesasView: React.FC<GerenciarDespesasViewProps> = ({
@@ -14,6 +15,7 @@ export const GerenciarDespesasView: React.FC<GerenciarDespesasViewProps> = ({
   onAddCategory,
   onDeleteCategory,
   onRenameCategory,
+  isAdmin = true,
 }) => {
   const [newCatName, setNewCatName] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -113,17 +115,19 @@ export const GerenciarDespesasView: React.FC<GerenciarDespesasViewProps> = ({
                   >
                     <Edit2 className="w-3 h-3" />
                   </button>
-                  <button
-                    onClick={() => {
-                      if (confirm(`Remover botão "${cat.name}"?`)) {
-                        onDeleteCategory(cat.id);
-                      }
-                    }}
-                    className="p-1 text-zinc-500 hover:text-rose-400 transition"
-                    title="Excluir"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
+                  {isAdmin && (
+                    <button
+                      onClick={() => {
+                        if (confirm(`Remover botão "${cat.name}"?`)) {
+                          onDeleteCategory(cat.id);
+                        }
+                      }}
+                      className="p-1 text-zinc-500 hover:text-rose-400 transition"
+                      title="Excluir"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  )}
                 </div>
               </>
             )}

@@ -39,10 +39,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
   const [active, setActive] = useState(true);
 
   const handleStartAdd = () => {
-    if (!isAdmin) {
-      alert('Apenas o Administrador Geral possui permissão para cadastrar novos usuários.');
-      return;
-    }
+    if (!isAdmin) return;
     setIsAdding(true);
     setEditingId(null);
     setName('');
@@ -53,10 +50,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
   };
 
   const handleStartEdit = (user: AppUser) => {
-    if (!isAdmin) {
-      alert('Apenas o Administrador Geral possui permissão para editar usuários.');
-      return;
-    }
+    if (!isAdmin) return;
     setEditingId(user.id);
     setIsAdding(false);
     setName(user.name);
@@ -69,7 +63,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAdmin) {
-      alert('Ação não autorizada. Apenas o Administrador Geral pode salvar alterações de usuários.');
+      alert('Acesso restrito: Somente administradores podem cadastrar ou alterar usuários.');
       return;
     }
     if (!name.trim()) return;
@@ -104,7 +98,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
   };
 
   const handleConfirmDeleteUser = () => {
-    if (!userToDelete || !isAdmin) {
+    if (!isAdmin || !userToDelete) {
       setUserToDelete(null);
       return;
     }
@@ -127,10 +121,10 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
           </p>
         </div>
 
-        {/* Botão Novo Usuário (somente para Administrador Geral) */}
+        {/* Botão Novo Usuário (Apenas Administrador) */}
         {!isAdding && !editingId && (
-          <div>
-            {isAdmin ? (
+          isAdmin ? (
+            <div>
               <button
                 onClick={handleStartAdd}
                 className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-indigo-600/20 transition active:scale-95"
@@ -138,27 +132,17 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
                 <Plus className="w-4 h-4" />
                 <span>Novo Usuário</span>
               </button>
-            ) : (
-              <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#17181e] border border-[#262833] text-zinc-400 text-xs font-semibold">
-                <Lock className="w-3.5 h-3.5 text-amber-400" />
-                <span>Criação restrita ao Administrador Geral</span>
-              </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="px-3.5 py-2 rounded-xl bg-[#17181e] border border-[#23252d] text-[11px] font-semibold text-zinc-400 flex items-center gap-2">
+              <Lock className="w-3.5 h-3.5 text-amber-400" />
+              <span>Apenas administradores podem cadastrar novos usuários</span>
+            </div>
+          )
         )}
       </div>
 
-      {/* Security notice for non-admin */}
-      {!isAdmin && (
-        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-3 text-amber-300 text-xs">
-          <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0" />
-          <span>
-            <strong>Acesso de Operador:</strong> Você está visualizando a listagem de usuários em modo de leitura. Somente o <strong>Administrador Geral</strong> pode cadastrar novos usuários, alterar cargos ou excluir contas.
-          </span>
-        </div>
-      )}
-
-      {/* Add / Edit Form Modal/Drawer */}
+      {/* Add / Edit Form Modal/Drawer (Apenas Administrador) */}
       {(isAdding || editingId) && isAdmin && (
         <form onSubmit={handleSubmit} className="p-5 rounded-2xl bg-[#14151a] border border-indigo-500/40 space-y-4 shadow-2xl">
           <div className="flex items-center justify-between pb-3 border-b border-[#23252d]">
@@ -204,8 +188,8 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
                 onChange={(e) => setRole(e.target.value as 'admin' | 'operador')}
                 className="w-full px-3.5 py-2.5 bg-[#17181e] border border-[#23252d] rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500 transition"
               >
-                <option value="operador">Operador de Lançamento</option>
-                <option value="admin">Administrador Geral</option>
+                <option value="operador">Operador de Lançamento (Sem relatórios, sem excluir e sem criar usuários)</option>
+                <option value="admin">Administrador Geral (Acesso total)</option>
               </select>
             </div>
 
@@ -319,7 +303,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
                       Setor: {user.setor}
                     </div>
                   )}
-                  {isAdmin && user.pass && (
+                  {user.pass && (
                     <div className="text-[10px] text-zinc-400 font-mono mt-0.5">
                       Senha de acesso: <span className="text-zinc-200 font-semibold">{user.pass}</span>
                     </div>
@@ -327,7 +311,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
                 </div>
               </div>
 
-              {/* Botões de Ação (Apenas habilitados para o Administrador Geral) */}
+              {/* Botões de Ação (Apenas Administrador) */}
               {isAdmin && (
                 <div className="flex items-center gap-1 shrink-0">
                   <button
@@ -351,8 +335,8 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
         })}
       </div>
 
-      {/* Confirmation Modal for User Deletion */}
-      {userToDelete && (
+      {/* Confirmation Modal for User Deletion (Apenas Administrador) */}
+      {userToDelete && isAdmin && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
           <div className="w-full max-w-md bg-[#131418] border border-rose-500/40 rounded-2xl shadow-2xl p-6 space-y-5 animate-scale-in">
             <div className="flex items-start gap-4">

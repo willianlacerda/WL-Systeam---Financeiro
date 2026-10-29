@@ -19,33 +19,40 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   onTabChange,
   isAdmin = false,
 }) => {
-  const navItems = [
+  const allNavItems = [
     {
       id: 'lancar' as ActiveTab,
       label: 'Lançar',
       icon: PlusCircle,
+      adminOnly: false,
     },
     {
       id: 'vendas' as ActiveTab,
       label: 'Vendas',
       icon: TrendingUp,
+      adminOnly: false,
     },
     {
       id: 'historico' as ActiveTab,
       label: 'Histórico',
       icon: History,
+      adminOnly: false,
     },
-    ...(isAdmin ? [{
+    {
       id: 'relatorios' as ActiveTab,
       label: 'Relatórios',
       icon: PieChart,
-    }] : []),
+      adminOnly: true,
+    },
     {
       id: 'configuracoes' as ActiveTab,
       label: 'Config',
       icon: Settings,
+      adminOnly: false,
     },
   ];
+
+  const navItems = allNavItems.filter(item => !item.adminOnly || isAdmin);
 
   return (
     <nav 

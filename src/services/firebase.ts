@@ -64,13 +64,22 @@ export async function getFirebaseFinancialData(): Promise<FinancialData | null> 
 export async function saveFirebaseFinancialData(data: FinancialData): Promise<boolean> {
   try {
     const docRef = doc(db, FINANCIAL_DATA_COLLECTION, FINANCIAL_DATA_DOC);
+    // Remove qualquer campo undefined que possa impedir o salvamento no Firestore
+    const cleanData = JSON.parse(JSON.stringify(data));
     await setDoc(docRef, {
-      ...data,
+      ...cleanData,
       updatedAt: new Date().toISOString(),
     }, { merge: true });
+    
+    // Atualiza também o cache local imediatamente
+    try {
+      localStorage.setItem('wl_system_data', JSON.stringify(cleanData));
+    } catch (e) {}
+
+    console.log('✅ Dados sincronizados no Firestore com sucesso!');
     return true;
   } catch (error) {
-    console.error('Erro ao salvar no Firestore:', error);
+    console.error('❌ Erro ao salvar no Firestore:', error);
     return false;
   }
 }
@@ -80,7 +89,8 @@ export async function saveFirebaseFinancialData(data: FinancialData): Promise<bo
  * Qualquer alteração feita no celular ou no computador sincroniza instantaneamente!
  */
 export function subscribeToFirebaseFinancialData(
-  onUpdate: (data: FinancialData) => void
+  onUpdate: (data: FinancialData) => void,
+  onError?: (err: any) => void
 ): () => void {
   const docRef = doc(db, FINANCIAL_DATA_COLLECTION, FINANCIAL_DATA_DOC);
   
@@ -88,19 +98,26 @@ export function subscribeToFirebaseFinancialData(
     docRef,
     (snap) => {
       if (snap.exists()) {
-        const data = snap.data() as FinancialData;
-        onUpdate({
-          expenses: Array.isArray(data.expenses) ? data.expenses : [],
-          sales: Array.isArray(data.sales) ? data.sales : [],
-          subCategories: Array.isArray(data.subCategories) ? data.subCategories : INITIAL_DATA.subCategories,
-          cities: Array.isArray(data.cities) ? data.cities : INITIAL_DATA.cities,
-          appUsers: Array.isArray(data.appUsers) ? data.appUsers : INITIAL_DATA.appUsers,
-          settings: data.settings || INITIAL_DATA.settings,
-        });
+        const raw = snap.data() as FinancialData;
+        const normalized: FinancialData = {
+          expenses: Array.isArray(raw.expenses) ? raw.expenses : [],
+          sales: Array.isArray(raw.sales) ? raw.sales : [],
+          subCategories: Array.isArray(raw.subCategories) ? raw.subCategories : INITIAL_DATA.subCategories,
+          cities: Array.isArray(raw.cities) ? raw.cities : INITIAL_DATA.cities,
+          appUsers: Array.isArray(raw.appUsers) ? raw.appUsers : INITIAL_DATA.appUsers,
+          settings: raw.settings || INITIAL_DATA.settings,
+        };
+        // Mantém o cache local atualizado com a nuvem
+        try {
+          localStorage.setItem('wl_system_data', JSON.stringify(normalized));
+        } catch (e) {}
+        
+        onUpdate(normalized);
       }
     },
     (error) => {
       console.warn('Erro na sincronização em tempo real do Firestore:', error);
+      if (onError) onError(error);
     }
   );
 }

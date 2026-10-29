@@ -252,93 +252,79 @@ export const VendasView: React.FC<VendasViewProps> = ({
         {/* Right Column (4 cols): Resumo e Lançamentos Recentes */}
         <div className="lg:col-span-4 space-y-5">
           
-          {/* Cards Sensíveis de Faturamento e DRE (Apenas Administrador Geral) */}
-          {isAdmin ? (
-            <>
-              {/* Card Resumo do Mês (Vendas) */}
-              <div className="p-5 rounded-2xl bg-[#121317] border border-[#1f2128] space-y-3 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold tracking-wider text-emerald-400 uppercase">
-                    FATURAMENTO DO MÊS (VENDAS)
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 uppercase">
-                    ENTRADAS
-                  </span>
-                </div>
-
-                <div>
-                  <div className="text-2xl font-black text-[#00e676] font-mono tracking-tight">
-                    {formatCurrencyBRL(currentMonthSalesTotal)}
-                  </div>
-                  <div className="text-[11px] text-zinc-400 mt-1">
-                    Total acumulado geral: <strong className="text-white font-mono">{formatCurrencyBRL(totalSalesAmount)}</strong>
-                  </div>
-
-                  {/* Visual bar */}
-                  <div className="w-full bg-[#1e2027] h-1.5 rounded-full overflow-hidden mt-3">
-                    <div className="bg-[#00e676] h-full rounded-full w-3/4 shadow-sm shadow-emerald-500/50" />
-                  </div>
-                </div>
+          {/* Card Resumo do Mês (Vendas - Apenas Administrador) */}
+          {isAdmin && (
+            <div className="p-5 rounded-2xl bg-[#121317] border border-[#1f2128] space-y-3 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold tracking-wider text-emerald-400 uppercase">
+                  FATURAMENTO DO MÊS (VENDAS)
+                </span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 uppercase">
+                  ENTRADAS
+                </span>
               </div>
 
-              {/* Card Comparativo DRE do Mês (Vendas vs Despesas) */}
-              <div className="p-5 rounded-2xl bg-[#121317] border border-indigo-500/30 space-y-3 shadow-sm bg-gradient-to-b from-[#141520] to-[#111216]">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold tracking-wider text-indigo-400 uppercase flex items-center gap-1.5">
-                    <Landmark className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>BALANÇO DRE DO MÊS</span>
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${
-                    isMonthLucro 
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' 
-                      : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
-                  }`}>
-                    {isMonthLucro ? 'LUCRO' : 'PREJUÍZO'}
-                  </span>
+              <div>
+                <div className="text-2xl font-black text-[#00e676] font-mono tracking-tight">
+                  {formatCurrencyBRL(currentMonthSalesTotal)}
+                </div>
+                <div className="text-[11px] text-zinc-400 mt-1">
+                  Total acumulado geral: <strong className="text-white font-mono">{formatCurrencyBRL(totalSalesAmount)}</strong>
                 </div>
 
-                <div className="space-y-1.5 pt-1 text-xs">
-                  <div className="flex items-center justify-between text-zinc-400">
-                    <span>(+) Vendas do Mês:</span>
-                    <span className="font-mono font-bold text-emerald-400">
-                      {formatCurrencyBRL(currentMonthSalesTotal)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-zinc-400">
-                    <span>(-) Despesas da Empresa:</span>
-                    <span className="font-mono font-bold text-rose-400">
-                      -{formatCurrencyBRL(currentMonthExpensesTotal)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-[#232533]">
-                    <span className="text-zinc-200 font-bold">(=) Saldo do Exercício:</span>
-                    <span className={`font-mono font-black text-sm ${isMonthLucro ? 'text-[#00e676]' : 'text-rose-400'}`}>
-                      {formatCurrencyBRL(currentMonthNetResult)}
-                    </span>
-                  </div>
+                {/* Visual bar */}
+                <div className="w-full bg-[#1e2027] h-1.5 rounded-full overflow-hidden mt-3">
+                  <div className="bg-[#00e676] h-full rounded-full w-3/4 shadow-sm shadow-emerald-500/50" />
                 </div>
+              </div>
+            </div>
+          )}
 
-                <button
-                  onClick={handleOpenExportDRE}
-                  className="w-full mt-2 py-2 px-3 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[11px] font-bold tracking-wide transition flex items-center justify-center gap-1.5 active:scale-95"
-                >
+          {/* Card Comparativo DRE do Mês (Vendas vs Despesas - Apenas Administrador) */}
+          {isAdmin && (
+            <div className="p-5 rounded-2xl bg-[#121317] border border-indigo-500/30 space-y-3 shadow-sm bg-gradient-to-b from-[#141520] to-[#111216]">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold tracking-wider text-indigo-400 uppercase flex items-center gap-1.5">
                   <Landmark className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>Emitir Demonstrativo DRE (PDF)</span>
-                </button>
+                  <span>BALANÇO DRE DO MÊS</span>
+                </span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${
+                  isMonthLucro 
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' 
+                    : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                }`}>
+                  {isMonthLucro ? 'LUCRO' : 'PREJUÍZO'}
+                </span>
               </div>
-            </>
-          ) : (
-            /* Card Operador de Lançamento */
-            <div className="p-5 rounded-2xl bg-[#121317] border border-[#1f2128] space-y-2.5 shadow-sm">
-              <div className="text-[11px] font-bold tracking-wider text-emerald-400 uppercase">
-                TERMINAL OPERACIONAL
+
+              <div className="space-y-1.5 pt-1 text-xs">
+                <div className="flex items-center justify-between text-zinc-400">
+                  <span>(+) Vendas do Mês:</span>
+                  <span className="font-mono font-bold text-emerald-400">
+                    {formatCurrencyBRL(currentMonthSalesTotal)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-zinc-400">
+                  <span>(-) Despesas da Empresa:</span>
+                  <span className="font-mono font-bold text-rose-400">
+                    -{formatCurrencyBRL(currentMonthExpensesTotal)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-[#232533]">
+                  <span className="text-zinc-200 font-bold">(=) Saldo do Exercício:</span>
+                  <span className={`font-mono font-black text-sm ${isMonthLucro ? 'text-[#00e676]' : 'text-rose-400'}`}>
+                    {formatCurrencyBRL(currentMonthNetResult)}
+                  </span>
+                </div>
               </div>
-              <div className="text-xs font-bold text-white">
-                Lançamento de Vendas & Entradas
-              </div>
-              <p className="text-[11px] text-zinc-400 leading-relaxed">
-                Selecione a cidade desejada na lista de praças ao lado para registrar o faturamento.
-              </p>
+
+              <button
+                onClick={handleOpenExportDRE}
+                className="w-full mt-2 py-2 px-3 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[11px] font-bold tracking-wide transition flex items-center justify-center gap-1.5 active:scale-95"
+              >
+                <Landmark className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Emitir Demonstrativo DRE (PDF)</span>
+              </button>
             </div>
           )}
 
