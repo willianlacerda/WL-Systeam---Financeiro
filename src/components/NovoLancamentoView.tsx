@@ -7,7 +7,6 @@ interface NovoLancamentoViewProps {
   expenses: Expense[];
   onSelectCategory: (categoryName: string) => void;
   onViewAllExpenses: () => void;
-  currentMonthTotal: number;
   isAdmin?: boolean;
 }
 
@@ -16,7 +15,6 @@ export const NovoLancamentoView: React.FC<NovoLancamentoViewProps> = ({
   expenses,
   onSelectCategory,
   onViewAllExpenses,
-  currentMonthTotal,
   isAdmin = true,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -148,34 +146,6 @@ export const NovoLancamentoView: React.FC<NovoLancamentoViewProps> = ({
             )}
           </div>
         </div>
-
-        {/* RESUMO OPERACIONAL Card (Apenas Administrador) */}
-        {isAdmin && (
-          <div className="p-5 rounded-2xl bg-[#121317] border border-[#1f2128] space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold tracking-wider text-emerald-400 uppercase">
-                RESUMO OPERACIONAL
-              </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 uppercase">
-                ATIVO
-              </span>
-            </div>
-
-            <div>
-              <div className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
-                MÊS ATUAL
-              </div>
-              <div className="text-2xl font-black text-white font-mono tracking-tight mt-1">
-                R$ {currentMonthTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-              </div>
-
-              {/* Neon Green Bar */}
-              <div className="w-full bg-[#1e2027] h-1.5 rounded-full overflow-hidden mt-3">
-                <div className="bg-[#00e676] h-full rounded-full w-2/5 shadow-sm shadow-emerald-500/50" />
-              </div>
-            </div>
-          </div>
-        )}
 
       </div>
 

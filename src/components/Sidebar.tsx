@@ -14,16 +14,12 @@ export type ActiveTab = 'lancar' | 'vendas' | 'historico' | 'relatorios' | 'conf
 interface SidebarProps {
   activeTab: ActiveTab;
   onTabChange: (tab: ActiveTab) => void;
-  totalAcumulado: number;
-  totalMensal: number;
   isAdmin?: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   onTabChange,
-  totalAcumulado,
-  totalMensal,
   isAdmin = false,
 }) => {
   return (
@@ -132,36 +128,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Bottom Status Widget */}
-      <div className="space-y-2.5 pt-4">
+      <div className="pt-4 border-t border-[#1c1d22]">
         <div className="flex items-center gap-2 text-[10px] tracking-wider font-semibold text-emerald-400">
           <Database className="w-3.5 h-3.5 text-emerald-400" />
           <span>DADOS SINCRONIZADOS</span>
         </div>
-
-        {/* TOTAL MENSAL E TOTAL ACUMULADO (Apenas Administrador) */}
-        {isAdmin && (
-          <>
-            {/* TOTAL MENSAL */}
-            <div className="p-3 rounded-xl bg-[#141519] border border-[#20222a] space-y-1">
-              <div className="text-[10px] font-semibold tracking-wider text-zinc-400 uppercase">
-                TOTAL MENSAL
-              </div>
-              <div className="text-base font-extrabold text-[#00e676] font-mono tracking-tight">
-                R$ {totalMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-            </div>
-
-            {/* TOTAL ACUMULADO */}
-            <div className="p-3 rounded-xl bg-[#141519] border border-[#20222a] space-y-1">
-              <div className="text-[10px] font-semibold tracking-wider text-zinc-400 uppercase">
-                TOTAL ACUMULADO
-              </div>
-              <div className="text-base font-extrabold text-[#00e676] font-mono tracking-tight">
-                R$ {totalAcumulado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-            </div>
-          </>
-        )}
       </div>
     </aside>
   );

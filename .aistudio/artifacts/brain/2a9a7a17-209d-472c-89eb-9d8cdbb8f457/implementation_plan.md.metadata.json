@@ -1,6 +1,6 @@
 {
-  "summary":  "Plano de implementação para ocultar dados de valores sensíveis (Total Mensal, Total Acumulado, Resumo Operacional e Balanço DRE) para usuários com perfil Operador de Lançamento, mantendo o acesso exclusivo a administradores.",
-  "updatedAt":  "2026-10-29T11:27:36.557183498Z",
+  "summary":  "Plano de implementação para remoção dos dados financeiros sensíveis (Total Mensal e Total Acumulado) da barra lateral e da tela de lançamento, centralizando a visualização exclusiva de totais no módulo de Relatórios para administradores.",
+  "updatedAt":  "2026-10-30T17:00:41.261628629Z",
   "requestFeedback":  true,
   "userFacing":  true
 }

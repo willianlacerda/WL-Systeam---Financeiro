@@ -137,19 +137,6 @@ export const App: React.FC = () => {
       });
   }, []);
 
-  // Total Acumulado (all time)
-  const totalAcumulado = useMemo(() => {
-    return data.expenses.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
-  }, [data.expenses]);
-
-  // Current Month Total
-  const currentMonthTotal = useMemo(() => {
-    const currentMonthKey = new Date().toISOString().slice(0, 7); // e.g. "2026-10"
-    return data.expenses
-      .filter(e => e.date && e.date.startsWith(currentMonthKey))
-      .reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
-  }, [data.expenses]);
-
   // Current user & admin check
   const sessionUser = typeof window !== 'undefined' ? sessionStorage.getItem('wl_session_user') : null;
   const currentUser = sessionUser || data.settings?.currentUser || 'Willian';
@@ -481,8 +468,6 @@ export const App: React.FC = () => {
       <Sidebar
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        totalAcumulado={totalAcumulado}
-        totalMensal={currentMonthTotal}
         isAdmin={isAdmin}
       />
 
@@ -508,7 +493,6 @@ export const App: React.FC = () => {
               expenses={data.expenses}
               onSelectCategory={handleSelectCategory}
               onViewAllExpenses={() => setActiveTab('historico')}
-              currentMonthTotal={currentMonthTotal}
               isAdmin={isAdmin}
             />
           )}

@@ -1,34 +1,58 @@
-# Plano de Implementação: Ocultar Valores Sensíveis para Operador de Lançamento
+# Remoção de Dados Sensíveis do Painel Principal (Total Mensal & Acumulado)
 
-## 1. Visão Geral e Decisões Alinhadas com o Usuário
-Conforme alinhado através das perguntas de clarificação:
-- **Total Mensal e Total Acumulado (Barra Lateral):** Os blocos com os valores totais acumulados da empresa exibidos na barra lateral (destacados na imagem enviada) serão **completamente ocultados** para usuários com o perfil `operador` (Operador de Lançamento). Apenas administradores terão visibilidade.
-- **Resumos Consolidados e Balanço DRE:** O card de **Resumo Operacional (Mês Atual)** na tela inicial de despesas, o card de **Faturamento do Mês / Total Acumulado Geral** e o card de **Balanço DRE do Mês (Vendas vs Despesas / Lucro ou Prejuízo)** na tela de vendas serão restritos exclusivamente ao perfil `admin`.
-- **Lançamentos Individuais Preservados:** Os lançamentos operacionais individuais (despesas e vendas recentes no histórico e na tela de lançamento) continuam visíveis para permitir o trabalho diário de registro operacional.
+Eliminação dos indicadores financeiros consolidados de despesas e acumulados da barra lateral e da tela de novos lançamentos, garantindo que valores macro fiquem restritos exclusivamente ao módulo de Relatórios e Inteligência para administradores.
 
----
-
-## 2. Modificações nos Componentes e Arquitetura
-
-### 1. `src/components/Sidebar.tsx`
-- **Total Mensal e Total Acumulado:** Condicionar a exibição dos cards de `TOTAL MENSAL` e `TOTAL ACUMULADO` ao `isAdmin`.
-- Para operadores, os blocos com os valores totais consolidados não serão renderizados, mantendo o status de sincronização limpo.
-
-### 2. `src/components/NovoLancamentoView.tsx`
-- **Card "Resumo Operacional":** Condicionar o card que exibe o total acumulado do mês (`currentMonthTotal`) e a barra de progresso ao `isAdmin`.
-- Para o operador, a grade de seleção de despesas e os lançamentos recentes continuam funcionais e limpos sem expor o montante financeiro da empresa.
-
-### 3. `src/components/VendasView.tsx`
-- **Card Faturamento do Mês (Vendas):** Exibir somente para `isAdmin`.
-- **Card Balanço DRE do Mês (Vendas vs Despesas):** Exibir somente para `isAdmin`.
-- A lista de cidades para lançamento de vendas e as vendas recentes permanecem acessíveis para o operador registrar novas vendas.
+> [!IMPORTANT]
+> **Decisões Confirmadas:**
+> - **Onde remover:** Remoção completa dos cartões na barra lateral esquerda (`Sidebar`) e do cartão de resumo operacional na tela de novos lançamentos (`NovoLancamentoView`).
+> - **Visualização de Totais:** O acesso aos valores consolidados permanecerá restrito e exclusivo dentro da aba de **Relatórios** para usuários com perfil de **Administrador**.
 
 ---
 
-## 3. Plano de Verificação e Testes
-1. **Verificação de Compilação & Tipagem:**
-   - Executar `lint_applet` para validação sem erros de TypeScript.
-   - Executar `compile_applet` para certificar integridade do build Vite/React.
-2. **Validação de Interface (Admin vs Operador):**
-   - Usuário Administrador (`admin`): Visualiza todos os totais na Sidebar, Resumo Operacional e Balanço DRE.
-   - Usuário Operador (`operador`): Não visualiza nenhum dos blocos de totais ou DRE, preservando o sigilo de dados financeiros consolidados.
+### 1. Visão Geral & Privacidade de Dados
+
+- **Objetivo:** Proteger dados financeiros estratégicos contra visualização indesejada por operadores ou pessoas próximas às telas operacionais no dia a dia.
+- **Público-alvo:** Administradores e Operadores de Lançamento. O operador tem acesso focado no input de dados (despesas e vendas por cidade), enquanto o administrador consulta o balanço consolidado quando necessário em aba dedicada e segura.
+
+---
+
+### 2. Experiência do Usuário & Ajustes Visuais
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        WL SYSTEM - FLUXO AJUSTADO                      │
+└────────────────────────────────────────────────────────────────────────┘
+
+    PAINEL OPERACIONAL (TELA LIMPA)               RELATÓRIOS (RESTRITO ADM)
+   ┌────────────────────────────────┐            ┌───────────────────────────┐
+   │ BARRA LATERAL                  │            │ PAINEL DE INTELIGÊNCIA    │
+   │  • Menu de Navegação           │            │  • Total Despesas         │
+   │  • Status de Sincronização     │            │  • Faturamento Total      │
+   │  [❌ Sem totais financeiros]   │            │  • Balanço DRE            │
+   ├────────────────────────────────┤   ──────>  │  • Ranking de Cidades     │
+   │ TELA DE LANÇAMENTOS            │            │  • Relatórios em PDF      │
+   │  • Seleção de Categorias       │            └───────────────────────────┘
+   │  • Últimos Lançamentos (lista) │                          ▲
+   │  [❌ Sem cartão de mês atual]  │                          │
+   └────────────────────────────────┘             Apenas perfil Administrador
+```
+
+- **Barra Lateral (`Sidebar`):**
+  - Mantém o cabeçalho oficial da empresa e os itens de navegação rápida.
+  - No rodapé da barra lateral, permanece apenas o selo discreto **"DADOS SINCRONIZADOS"** com ícone de banco de dados, eliminando os dois cartões pretos de `TOTAL MENSAL` e `TOTAL ACUMULADO`.
+- **Tela de Lançamento (`NovoLancamentoView`):**
+  - A coluna direita passa a focar nos **Últimos Lançamentos** recentes, removendo o card `RESUMO OPERACIONAL - MÊS ATUAL` que exibia a cifra total e a barra neon de progresso.
+
+---
+
+### 3. Decisões Técnicas & Arquitetura
+
+- **Componente `Sidebar.tsx`:**
+  - Remover a renderização condicional dos blocos `TOTAL MENSAL` e `TOTAL ACUMULADO`.
+  - Simplificar as propriedades recebidas pelo componente.
+- **Componente `NovoLancamentoView.tsx`:**
+  - Remover o container de `RESUMO OPERACIONAL` com a métrica `currentMonthTotal`.
+- **Orquestração `App.tsx`:**
+  - Desacoplar os cálculos de totais do ciclo de renderização inicial do painel principal, mantendo a performance leve e os dados sensíveis encapsulados sob demanda no `ReportsView`.
+- **Módulo de Relatórios (`ReportsView.tsx`):**
+  - Preservado integralmente com proteção de permissão (`isAdmin`), garantindo que a análise financeira completa continue disponível para download em PDF e consulta executiva.
